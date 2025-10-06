@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+button {
+    cursor: pointer;
+}
+
+* {
+    scrollbar-width: none;
+    user-select: none;
+}
