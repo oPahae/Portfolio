@@ -62,7 +62,7 @@ const Bin = ({ page, setPage }) => {
       const allItems = e.target.result;
       const folderItems = allItems.filter(item => {
         if (item.type === 'folder') return item.ppath === currentPath;
-        else return item.path === currentPath;
+        else return item.ppath === currentPath;
       });
       setItems(folderItems);
     };
