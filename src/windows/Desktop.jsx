@@ -61,7 +61,18 @@ const Desktop = ({ page, setPage }) => {
         const request = objectStore.getAll();
 
         request.onsuccess = (e) => {
-            const allItems = e.target.result;
+            const allItems = e.target.result.map(item => {
+                if(isNaN(item.gridX) || isNaN(item.gridY)) {
+                    const empty = findEmptyPosition();
+                    const newItem = {
+                        ...item,
+                        gridX: empty.x,
+                        gridY: empty.y,
+                    }
+                    return newItem;
+                }
+                return item;
+            });
             const desktopItems = allItems.filter(item => {
                 if (item.type === 'folder') {
                     return item.ppath === 'C:/Users/pahae/desktop';
