@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Home, Folder as FolderIcon, LayoutGrid, List, Plus, Trash2, FolderOpen, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home, Folder as FolderIcon, LayoutGrid, List, Plus, Trash2, FolderOpen, FileText, Edit } from 'lucide-react';
 
 const Folder = ({ page, setPage }) => {
   const [currentPath, setCurrentPath] = useState('');
@@ -10,6 +10,8 @@ const Folder = ({ page, setPage }) => {
   const [viewMode, setViewMode] = useState('grid');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [renamingItemId, setRenamingItemId] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
   const db = useRef(null);
   const backRef = useRef(null);
   const folderRef = useRef(null);
@@ -351,14 +353,109 @@ const Folder = ({ page, setPage }) => {
         e.preventDefault();
         if (backRef.current) backRef.current.click();
       }
+      // if (e.key === 'Delete' && selectedItems.length > 0) {
+      //   selectedItems.forEach(id => {
+      //     const item = items.find(i => i.id === id);
+      //     if (item && item.type !== 'app') {
+      //       handleDelete(item);
+      //     } else if (item && item.type === 'app') {
+      //       alert('Vous avez besoin de droits administrateur pour supprimer cette application');
+      //     }
+      //   });
+      // }
+      // if (e.key === 'F2' && selectedItems.length > 0) {
+      //   selectedItems.forEach(id => {
+      //     const item = items.find(i => i.id === id);
+      //     if (item && item.type !== 'app') {
+      //       handleItemRename(item);
+      //     } else if (item && item.type === 'app') {
+      //       alert('Vous avez besoin de droits administrateur pour modifier cette application');
+      //     }
+      //   });
+      // }
+      // if (e.key === 'Enter' && selectedItems.length > 0) {
+      //   selectedItems.forEach(id => {
+      //     const item = items.find(i => i.id === id);
+      //     handleItemClick(item);
+      //   });
+      // }
     };
+
     window.addEventListener('click', handleClick);
     window.addEventListener('keydown', handleKey);
     return () => {
       window.removeEventListener('click', handleClick);
-      window.removeEventListener('click', handleKey);
+      window.removeEventListener('keydown', handleKey);
     }
   }, []);
+
+  const handleItemRename = (item) => {
+    if (item.type === 'app') {
+      alert("Vous avez besoin de droits administrateur pour renommer cette application");
+      return;
+    }
+    setRenamingItemId(item.id);
+    setRenameValue(item.name);
+    setItemContextMenu(null);
+  };
+
+  const finishRename = (item) => {
+    const newName = renameValue.trim();
+    if (!newName || newName === item.name) {
+      setRenamingItemId(null);
+      return;
+    }
+
+    const oldPath = item.path;
+    const newPath = `C:/Users/pahae/desktop/${newName}`;
+
+    const updatedItem = { ...item, name: newName, path: item.type === 'folder' ? newPath : oldPath };
+    saveItem(updatedItem);
+
+    if (item.type === 'folder') {
+      const transaction = db.current.transaction(['items'], 'readwrite');
+      const objectStore = transaction.objectStore('items');
+      const getAllRequest = objectStore.getAll();
+
+      getAllRequest.onsuccess = (e) => {
+        const allItems = e.target.result;
+
+        const childrenToUpdate = allItems.filter(
+          (child) =>
+            child.ppath?.startsWith(oldPath) ||
+            child.path?.startsWith(oldPath)
+        );
+
+        childrenToUpdate.forEach((child) => {
+          const updatedChild = { ...child };
+
+          if (updatedChild.path && updatedChild.path.startsWith(oldPath)) {
+            updatedChild.path = updatedChild.path.replace(oldPath, newPath);
+          }
+          if (updatedChild.ppath && updatedChild.ppath.startsWith(oldPath)) {
+            updatedChild.ppath = updatedChild.ppath.replace(oldPath, newPath);
+          }
+
+          objectStore.put(updatedChild);
+        });
+
+        setItems((prevItems) =>
+          prevItems.map((i) => {
+            if (i.id === item.id) return updatedItem;
+            const match = childrenToUpdate.find((c) => c.id === i.id);
+            return match ? { ...i, path: match.path, ppath: match.ppath } : i;
+          })
+        );
+      };
+    } else {
+      setItems((prevItems) =>
+        prevItems.map((i) => (i.id === item.id ? updatedItem : i))
+      );
+    }
+
+    setRenamingItemId(null);
+    setRenameValue('');
+  };
 
   const getTypeIcon = (item) => {
     let icon = "";
@@ -457,7 +554,29 @@ const Folder = ({ page, setPage }) => {
             >
               <img src={getTypeIcon(item)} size={viewMode === 'grid' ? 48 : 24} className='text-blue-400 w-14 h-14' />
               <span className={`${viewMode === 'grid' ? 'text-sm text-center' : 'text-sm'} break-words`}>
-                {item.name}
+                {renamingItemId === item.id ? (
+                  <textarea
+                    value={renameValue}
+                    autoFocus
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setRenameValue(e.target.value)}
+                    onBlur={() => finishRename(item)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation();
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        finishRename(item);
+                      }
+                      if (e.key === 'Escape') {
+                        e.preventDefault();
+                        setRenamingItemId(null);
+                      }
+                    }}
+                    className="text-white font-semibold text-center px-1 w-full"
+                  />
+                ) : (
+                  item.name
+                )}
               </span>
             </div>
           ))}
@@ -502,6 +621,13 @@ const Folder = ({ page, setPage }) => {
             <span>Ouvrir</span>
           </div>
           <div
+            className='px-4 py-2 hover:bg-purple-700 cursor-pointer flex items-center gap-3'
+            onClick={() => handleItemRename(itemContextMenu.item)}
+          >
+            <Edit size={16} />
+            <span>Renommer</span>
+          </div>
+          <div
             className='px-4 py-2 hover:bg-red-900 hover:bg-opacity-20 cursor-pointer flex items-center gap-3 text-red-400'
             onClick={() => handleDelete(itemContextMenu.item)}
           >
@@ -513,6 +639,5 @@ const Folder = ({ page, setPage }) => {
     </div>
   );
 };
-
 
 export default Folder;
