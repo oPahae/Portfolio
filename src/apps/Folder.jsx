@@ -575,7 +575,7 @@ const Folder = ({ page, setPage }) => {
                     className="text-white font-semibold text-center px-1 w-full"
                   />
                 ) : (
-                  item.name
+                  item.name.length > 13 ? item.name.slice(0, 9) + '...' : item.name
                 )}
               </span>
             </div>
