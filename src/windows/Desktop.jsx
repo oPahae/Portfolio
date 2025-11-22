@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { desktopApps, desktopFolders } from '@/utils/apps';
 import { useRouter } from 'next/router';
+import JSZip from 'jszip';
 
 const Desktop = ({ page, setPage }) => {
     const router = useRouter();
@@ -711,6 +712,66 @@ const Desktop = ({ page, setPage }) => {
         return icon;
     }
 
+    const downloadFolderAsZip = async (folder) => {
+        const transaction = db.current.transaction(['items'], 'readonly');
+        const objectStore = transaction.objectStore('items');
+        const getAllRequest = objectStore.getAll();
+
+        getAllRequest.onsuccess = async (e) => {
+            const allItems = e.target.result;
+            const zip = new JSZip();
+
+            const addToZip = (parentPath, zipFolder) => {
+                const children = allItems.filter((item) => {
+                    if (item.type === 'folder') {
+                        return item.ppath === parentPath;
+                    }
+                    return item.path === parentPath;
+                });
+
+                children.forEach((child) => {
+                    if (child.type === 'folder') {
+                        const subFolder = zipFolder.folder(child.name);
+                        addToZip(child.path, subFolder);
+                    } else if (child.type === 'file') {
+                        zipFolder.file(child.name, child.content || '');
+                    } else if (child.type === 'image' || child.type === 'video' || child.type === 'audio' || child.type === 'pdf') {
+                        try {
+                            const base64Data = child.content.includes(',')
+                                ? child.content.split(',')[1]
+                                : child.content;
+                            zipFolder.file(child.name, base64Data, { base64: true });
+                        } catch (error) {
+                            console.error(`Erreur lors de l'ajout de ${child.name}:`, error);
+                        }
+                    }
+                });
+            };
+            addToZip(folder.path, zip);
+
+            try {
+                const blob = await zip.generateAsync({ type: 'blob' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${folder.name}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                setItemContextMenu(null);
+            } catch (error) {
+                console.error('Erreur lors de la création du ZIP:', error);
+                alert('Erreur lors de la création du fichier ZIP');
+            }
+        };
+
+        getAllRequest.onerror = () => {
+            console.error("Erreur lors de la récupération des items");
+            alert('Erreur lors de la récupération des fichiers');
+        };
+    };
+
     return (
         <div
             ref={desktopRef}
@@ -878,6 +939,17 @@ const Desktop = ({ page, setPage }) => {
                     <div className='px-4 py-2 hover:bg-gray-700 cursor-pointer' onClick={() => handleItemRename(itemContextMenu.item)}>
                         Renommer
                     </div>
+                    {(itemContextMenu.item.type === 'folder' || itemContextMenu.item.type === 'myfolder') && (
+                        <div
+                            className='px-4 py-2 hover:bg-gray-700 cursor-pointer'
+                            onClick={() => {
+                                downloadFolderAsZip(itemContextMenu.item);
+                                setItemContextMenu(null);
+                            }}
+                        >
+                            Télécharger
+                        </div>
+                    )}
                     <div
                         className='px-4 py-2 hover:bg-gray-700 cursor-pointer'
                         onClick={() => handleDelete(itemContextMenu.item)}
