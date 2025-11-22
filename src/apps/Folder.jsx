@@ -169,7 +169,7 @@ const Folder = ({ page, setPage }) => {
       name,
       path: currentPath,
       content: '',
-      icon: '📄'
+      icon: '/app_icons/file.png'
     };
 
     saveItem(newFile);
@@ -513,5 +513,6 @@ const Folder = ({ page, setPage }) => {
     </div>
   );
 };
+
 
 export default Folder;
