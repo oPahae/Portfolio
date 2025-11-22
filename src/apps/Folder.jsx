@@ -390,7 +390,7 @@ const Folder = ({ page, setPage }) => {
   }, []);
 
   const handleItemRename = (item) => {
-    if (item.type === 'app') {
+    if (item.type === 'app'|| item.type === 'myfolder') {
       alert("Vous avez besoin de droits administrateur pour renommer cette application");
       return;
     }
