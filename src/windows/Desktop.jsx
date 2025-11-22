@@ -422,7 +422,7 @@ const Desktop = ({ page, setPage }) => {
     };
 
     const handleDelete = (item) => {
-        if (item.type === 'app') {
+        if (item.type === 'app' || item.type === 'myfolder') {
             alert('Vous avez besoin de droits administrateur pour supprimer cette application');
             return;
         }
@@ -434,7 +434,7 @@ const Desktop = ({ page, setPage }) => {
     };
 
     const handleItemRename = (item) => {
-        if (item.type === 'app') {
+        if (item.type === 'app' || item.type === 'myfolder') {
             alert("Vous avez besoin de droits administrateur pour renommer cette application");
             return;
         }
@@ -508,7 +508,7 @@ const Desktop = ({ page, setPage }) => {
                 const item = items.find(i => i.id === id);
                 if (item && item.type !== 'app') {
                     handleDelete(item);
-                } else if (item && item.type === 'app') {
+                } else if (item && (item.type === 'app' || item.type === 'myfolder')) {
                     alert('Vous avez besoin de droits administrateur pour supprimer cette application');
                 }
             });
@@ -518,7 +518,7 @@ const Desktop = ({ page, setPage }) => {
                 const item = items.find(i => i.id === id);
                 if (item && item.type !== 'app') {
                     handleItemRename(item);
-                } else if (item && item.type === 'app') {
+                } else if (item && (item.type === 'app' || item.type === 'myfolder')) {
                     alert('Vous avez besoin de droits administrateur pour modifier cette application');
                 }
             });
