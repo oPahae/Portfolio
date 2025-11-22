@@ -15,10 +15,10 @@ const Desktop = ({ page, setPage }) => {
     const [selectionStart, setSelectionStart] = useState(null);
     const [selectionBox, setSelectionBox] = useState(null);
     const [iconSize, setIconSize] = useState('medium');
-    const desktopRef = useRef(null);
-    const db = useRef(null);
     const [renamingItemId, setRenamingItemId] = useState(null);
     const [renameValue, setRenameValue] = useState('');
+    const desktopRef = useRef(null);
+    const db = useRef(null);
 
     const GRID_SIZE = 105;
     const ICON_SIZES = {
@@ -62,7 +62,7 @@ const Desktop = ({ page, setPage }) => {
 
         request.onsuccess = (e) => {
             const allItems = e.target.result.map(item => {
-                if(isNaN(item.gridX) || isNaN(item.gridY)) {
+                if (isNaN(item.gridX) || isNaN(item.gridY)) {
                     const empty = findEmptyPosition();
                     const newItem = {
                         ...item,
@@ -211,6 +211,7 @@ const Desktop = ({ page, setPage }) => {
         saveItem(newFile);
         setItems([...items, newFile]);
         setContextMenu(null);
+        setRenamingItemId(newFile.id);
     };
 
     const createFolder = () => {
@@ -233,6 +234,7 @@ const Desktop = ({ page, setPage }) => {
         saveItem(newFolder);
         setItems([...items, newFolder]);
         setContextMenu(null);
+        setRenamingItemId(newFolder.id);
     };
 
     const findEmptyPosition = () => {
@@ -281,8 +283,8 @@ const Desktop = ({ page, setPage }) => {
                 : [dragging];
 
             const draggedItem = items.find(i => i.id === dragging);
-            const offsetX = gridX - draggedItem.gridX;
-            const offsetY = gridY - draggedItem.gridY;
+            const offsetX = gridX - draggedItem?.gridX;
+            const offsetY = gridY - draggedItem?.gridY;
 
             setItems(prevItems => {
                 const updatedItems = prevItems.map(item => {
@@ -308,8 +310,13 @@ const Desktop = ({ page, setPage }) => {
 
                     const key = `${item.gridX},${item.gridY}`;
                     if (occupied.has(key)) {
-                        const newPos = findEmptyPositionExcluding(updatedItems, draggedItems);
-                        return { ...item, gridX: newPos.x, gridY: newPos.y };
+                        if (item.type !== 'folder' && item.type !== 'myfolder') {
+                            const newPos = findEmptyPositionExcluding(updatedItems, draggedItems);
+                            return { ...item, gridX: newPos.x, gridY: newPos.y };
+                        }
+                        draggedItems.forEach(dragged => {
+                            moveFolder(items.find(i => i.id === dragged), item);
+                        })
                     }
                     return item;
                 });
@@ -446,11 +453,9 @@ const Desktop = ({ page, setPage }) => {
         const oldPath = item.path;
         const newPath = `C:/Users/pahae/desktop/${newName}`;
 
-        // Met à jour le dossier renommé
-        const updatedItem = { ...item, name: newName, path: newPath };
+        const updatedItem = { ...item, name: newName, path: item.type === 'folder' ? newPath : oldPath };
         saveItem(updatedItem);
 
-        // Si c'est un dossier, il faut mettre à jour tous ses enfants
         if (item.type === 'folder') {
             const transaction = db.current.transaction(['items'], 'readwrite');
             const objectStore = transaction.objectStore('items');
@@ -459,7 +464,6 @@ const Desktop = ({ page, setPage }) => {
             getAllRequest.onsuccess = (e) => {
                 const allItems = e.target.result;
 
-                // Trouver tous les enfants (et sous-enfants)
                 const childrenToUpdate = allItems.filter(
                     (child) =>
                         child.ppath?.startsWith(oldPath) ||
@@ -469,7 +473,6 @@ const Desktop = ({ page, setPage }) => {
                 childrenToUpdate.forEach((child) => {
                     const updatedChild = { ...child };
 
-                    // Mise à jour du path
                     if (updatedChild.path && updatedChild.path.startsWith(oldPath)) {
                         updatedChild.path = updatedChild.path.replace(oldPath, newPath);
                     }
@@ -480,7 +483,6 @@ const Desktop = ({ page, setPage }) => {
                     objectStore.put(updatedChild);
                 });
 
-                // Mets aussi à jour dans l'état React
                 setItems((prevItems) =>
                     prevItems.map((i) => {
                         if (i.id === item.id) return updatedItem;
@@ -490,13 +492,13 @@ const Desktop = ({ page, setPage }) => {
                 );
             };
         } else {
-            // Si ce n’est pas un dossier, simple update
             setItems((prevItems) =>
                 prevItems.map((i) => (i.id === item.id ? updatedItem : i))
             );
         }
 
         setRenamingItemId(null);
+        setRenameValue('');
     };
 
     const handleKeyDown = (e) => {
@@ -622,6 +624,78 @@ const Desktop = ({ page, setPage }) => {
         } catch (error) {
             console.error('Erreur lors du drop JSON:', error, data);
         }
+    };
+
+    const moveFolder = (draggedItem, targetFolder) => {
+        if (draggedItem.id === targetFolder.id) return;
+
+        const transaction = db.current.transaction(['items'], 'readwrite');
+        const objectStore = transaction.objectStore('items');
+        const getAllRequest = objectStore.getAll();
+
+        if (draggedItem.type !== 'folder') {
+            const updatedItem = { ...draggedItem, path: targetFolder.path };
+            objectStore.put(updatedItem);
+            loadItems();
+            return;
+        }
+
+        if (targetFolder.path && targetFolder.path.startsWith(draggedItem.path + '/')) {
+            alert("Impossible de déplacer un dossier dans l'un de ses sous-dossiers");
+            return;
+        }
+
+        getAllRequest.onsuccess = (e) => {
+            const allItems = e.target.result;
+
+            const oldPath = draggedItem.path;
+            const newPath = `${targetFolder.path}/${draggedItem.name}`;
+            const newPPath = targetFolder.path;
+
+            const updatedDraggedItem = {
+                ...draggedItem,
+                path: newPath,
+                ppath: newPPath
+            };
+            objectStore.put(updatedDraggedItem);
+
+            const updateChildren = (parentPath, newParentPath) => {
+                const children = allItems.filter(
+                    (item) =>
+                        (item.ppath && item.ppath === parentPath) ||
+                        (item.path && item.path === parentPath && item.type !== 'folder')
+                );
+
+                children.forEach((child) => {
+                    const updatedChild = { ...child };
+
+                    if (child.type === 'folder') {
+                        const oldChildPath = child.path;
+                        const newChildPath = `${newParentPath}/${child.name}`;
+
+                        updatedChild.path = newChildPath;
+                        updatedChild.ppath = newParentPath;
+
+                        objectStore.put(updatedChild);
+
+                        updateChildren(oldChildPath, newChildPath);
+                    } else {
+                        updatedChild.path = newParentPath;
+                        objectStore.put(updatedChild);
+                    }
+                });
+            };
+
+            updateChildren(oldPath, newPath);
+
+            transaction.oncomplete = () => {
+                loadItems();
+            };
+        };
+
+        getAllRequest.onerror = () => {
+            console.error("Erreur lors de la récupération des items");
+        };
     };
 
     const getTypeIcon = (item) => {
