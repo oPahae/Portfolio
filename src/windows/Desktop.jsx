@@ -831,7 +831,13 @@ const Desktop = ({ page, setPage }) => {
                                 className="text-white font-semibold text-center px-1 w-full"
                             />
                         ) : (
-                            item.title || item.name
+                            item.name ?
+                                item.name.length > 13 ? item.name.slice(0, 9) + '...' : item.name
+                                :
+                                item.title ?
+                                    item.title.length > 13 ? item.title.slice(0, 9) + '...' : item.title
+                                    :
+                                    ''
                         )}
                     </p>
                 </div>
