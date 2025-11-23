@@ -8,6 +8,7 @@ export default function App({ Component, pageProps }) {
   const domaine = config.domaine;
 
   const [focusing, setFocusing] = useState(true);
+  const [__SPEECH__, $__SPEECH__] = useState('');
   const [blurTitle, setBlurTitle] = useState("Reviens vite ! 😥");
   const blurTitles = ["Reviens vite ! 😥", "Reviens !!! 😢", "NOOON 😭😭😭", "Reviens 😥😥", "Ne me laisse pas seul", "Reviens à moi 😭😭", "Je t'attends 💔", "Ne me quitte paaaas !"];
 
@@ -69,7 +70,7 @@ export default function App({ Component, pageProps }) {
         <link rel="canonical" href={domaine} />
       </Head>
 
-      <Component {...pageProps} />
+      <Component {...pageProps} __SPEECH__={__SPEECH__} $__SPEECH__={$__SPEECH__} />
     </>
   );
 }
