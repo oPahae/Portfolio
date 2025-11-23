@@ -32,13 +32,13 @@ export const phoneApps = [
 ];
 
 export const desktopApps = [
-    { id: 'Me', title: 'Moi', icon: '/icons/me.png' },
-    { id: 'Achievements', title: 'Parcours', icon: '/icons/path.png' },
-    { id: 'Skills', title: 'Skills', icon: '/icons/skills.png' },
-    { id: 'Docs', title: 'Documents', icon: '/icons/docs.png' },
-    { id: 'Projects', title: 'Projets', icon: '/icons/projects.png' },
-    { id: 'Feedbacks', title: 'Avis', icon: '/icons/feedbacks.png' },
-    { id: 'Contact', title: 'Contact', icon: '/icons/contact.png' },
+    { id: 'Me', name: 'Me', title: 'Moi', icon: '/icons/me.png' },
+    { id: 'Achievements', name: 'Achievements', title: 'Parcours', icon: '/icons/path.png' },
+    { id: 'Skills', name: 'Skills', title: 'Skills', icon: '/icons/skills.png' },
+    { id: 'Docs', name: 'Docs', title: 'Documents', icon: '/icons/docs.png' },
+    { id: 'Projects', name: 'Projects', title: 'Projets', icon: '/icons/projects.png' },
+    { id: 'Feedbacks', name: 'Feedbacks', title: 'Avis', icon: '/icons/feedbacks.png' },
+    { id: 'Contact', name: 'Contact', title: 'Contact', icon: '/icons/contact.png' },
 ];
 
 export const desktopFolders = [
