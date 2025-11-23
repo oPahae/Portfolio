@@ -1,12 +1,22 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Bot, Send, User, Sparkles } from 'lucide-react';
 import { socials, achievements, SKILLS, feedbacks, projects } from "../utils/constants";
 
-const AI = () => {
+const AI = ({ __SPEECH__ }) => {
   const [question, setQuestion] = useState('');
   const [questionSent, setQuestionSent] = useState('');
   const [response, setResponse] = useState("Bonjour ! Je suis l'assistant IA de Bahaa-eddine. Posez-moi des questions sur son parcours, ses compétences, ses projets ou ses réalisations.");
   const [isLoading, setIsLoading] = useState(false);
+  const sendRef = useRef(null);
+
+  useEffect(() => {
+    if(__SPEECH__) {
+      if(__SPEECH__.includes('envo'))
+        sendRef.current.click();
+      else
+        setQuestion(__SPEECH__);
+    }
+  }, [__SPEECH__]);
 
   const buildContext = useCallback(() => {
     return `Tu es l'assistant IA personnel de Bahaa-eddine Lamrissi. Voici les informations le concernant :
@@ -100,6 +110,7 @@ const AI = () => {
                 className="w-full flex-grow px-4 py-3 rounded-xl bg-gray-800/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
               />
               <button
+                ref={sendRef}
                 onClick={handleSendMessage}
                 disabled={!question.trim() || isLoading}
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed flex items-center gap-2"
