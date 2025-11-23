@@ -408,6 +408,57 @@ const projects = [
 const config = {
   logo: "/logo.png",
   domaine: "https://pahae.vercel.app",
-}
+};
 
-export { socials, achievements, SKILLS, feedbacks, projects, config };
+let j = 0;
+const media = [
+  {
+    id: ++j,
+    type: 'video',
+    name: 'Me in AOT\'s world',
+    content: `<script src="https://fast.wistia.com/player.js" async></script><script src="https://fast.wistia.com/embed/hoyt9s77oc.js" async type="module"></script><style>wistia-player[media-id='hoyt9s77oc']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/hoyt9s77oc/swatch'); display: block; filter: blur(5px); }</style> <wistia-player media-id="hoyt9s77oc" wistia-popover="true" aspect="2.0" style="width: 150px;height: 75px;"></wistia-player>`
+  },
+  {
+    id: ++j,
+    type: 'video',
+    name: 'Soutenance de mon PFE',
+    content: `<script src="https://fast.wistia.com/player.js" async></script><script src="https://fast.wistia.com/embed/4yhf21rzrd.js" async type="module"></script><style>wistia-player[media-id='4yhf21rzrd']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/4yhf21rzrd/swatch'); display: block; filter: blur(5px); padding-top:56.25%; }</style> <wistia-player media-id="4yhf21rzrd" aspect="1.7777777777777777"></wistia-player>`
+  },
+  {
+    id: ++j,
+    type: 'video',
+    name: 'ألم يان للذين ءامنوا',
+    content: `<script src="https://fast.wistia.com/player.js" async></script><script src="https://fast.wistia.com/embed/vx5mblf79a.js" async type="module"></script><style>wistia-player[media-id='vx5mblf79a']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/vx5mblf79a/swatch'); display: block; filter: blur(5px); }</style> <wistia-player media-id="vx5mblf79a" wistia-popover="true" aspect="1.7777777777777777" style="width: 150px;height: 84px;"></wistia-player>`
+  },
+];
+
+const voiceCommands = [
+  { words: ["moi", "profil", "générale"], page: "Me" },
+  { words: ["parcours", "achievement"], page: "Achievements" },
+  { words: ["compétence", "skills"], page: "Skills" },
+  { words: ["projet"], page: "Projects" },
+  { words: ["document", "doc"], page: "Docs" },
+  { words: ["avis", "feedback"], page: "Feedbacks" },
+  { words: ["contact"], page: "Contact" },
+  { words: ["pahae", "intelligence", "ia"], page: "Pahae AI" },
+
+  { words: ["corbeille", "bin"], page: "Bin" },
+  { words: ["chrome", "navigateur"], page: "Chrome" },
+  { words: ["dossier"], page: "Folder" },
+  { words: ["paint"], page: "Paint" },
+  { words: ["ordinateur", "this pc", "pc", "paramètres", "settings"], page: "This PC" },
+
+  { words: ["zoom"], page: "Infinite Zoom" },
+  { words: ["pointeur", "pointer"], page: "Pointer" },
+  { words: ["alchemy"], page: "Little Alchemy" },
+  { words: ["univers", "espace"], page: "Universe" },
+
+  { words: ["vidéo"], page: "Mes Vidéos" },
+  { words: ["image"], page: "Mes Images" },
+  { words: ["audio"], page: "Mes Audios" },
+
+  { words: ["terminal", "cmd", "invite de commande"], page: "Terminal" },
+  { words: ["ferme tout", "fermer", "clear", "ferme"], page: "" },
+];
+
+export { socials, achievements, SKILLS, feedbacks, projects, config, media, voiceCommands };
