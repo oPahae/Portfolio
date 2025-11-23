@@ -3,7 +3,7 @@ import { desktopApps, desktopFolders } from '@/utils/apps';
 import { useRouter } from 'next/router';
 import JSZip from 'jszip';
 
-const Desktop = ({ page, setPage }) => {
+const Desktop = ({ page, setPage, __SPEECH__ }) => {
     const router = useRouter();
     const { safeMode } = router.query;
     const [items, setItems] = useState([]);
