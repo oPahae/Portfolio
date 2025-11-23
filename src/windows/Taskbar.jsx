@@ -3,15 +3,69 @@ import { Terminal, Zap, Play, Folder, Wifi, Battery, Power, Settings, User, Wifi
 import { apps, games } from '@/utils/apps';
 import { useRouter } from 'next/router';
 
-const Windows = ({ page, setPage }) => {
+const Windows = ({ page, setPage, __SPEECH__, $__SPEECH__, tabs, setTabs }) => {
   const router = useRouter();
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [showGamesMenu, setShowGamesMenu] = useState(false);
   const [batterieLvl, setBatterieLvl] = useState(0);
   const [chargingStat, setChargingStat] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
+  const [speechActive, setSpeechActive] = useState(false);
   const startMenuRef = useRef(null);
   const startButtonRef = useRef(null);
+
+  useEffect(() => {
+    ['start', 'démarrer', 'démarrage', 'applications'].forEach(key => {
+      if (__SPEECH__.toLowerCase().includes(key))
+        setShowStartMenu(true);
+    })
+    if (__SPEECH__.includes('arrête'))
+      setSpeechActive(false);
+  }, [__SPEECH__]);
+
+  useEffect(() => {
+    if (page === '' || tabs.includes(page)) return;
+    if (tabs.length > 5) setTabs(tabs.slice(1));
+    setTabs([...tabs, page]);
+  }, [page]);
+
+  useEffect(() => {
+    if (!('webkitSpeechRecognition' in window)) {
+      console.warn("Speech Recognition not supported");
+      return;
+    }
+
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "fr-FR";
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      $__SPEECH__(transcript.trim());
+    };
+
+    recognition.onerror = (err) => {
+      console.error("Speech recognition error:", err);
+    };
+
+    if (speechActive) {
+      try {
+        recognition.start();
+      } catch (e) {
+        console.warn("Recognition already started");
+      }
+    } else {
+      recognition.stop();
+    }
+
+    return () => {
+      recognition.stop();
+    };
+  }, [speechActive]);
 
   useEffect(() => {
     let batteryRef;
@@ -232,25 +286,31 @@ const Windows = ({ page, setPage }) => {
 
       <div className="w-px h-8 bg-white/20 mx-3"></div>
 
+      <div className='flex justify-center items-center'>
+        <div className={`${speechActive ? 'bg-red-600 animate-ping' : 'bg-gray-300'} rounded-full w-6 h-6 cursor-pointer`} onClick={() => setSpeechActive(p => !p)} />
+      </div>
+
+      <div className="w-px h-8 bg-white/20 mx-3"></div>
+
       <div className="flex items-center gap-2 flex-1">
-        <button
+        {/* <button
           onClick={() => { setPage('Terminal'); setShowStartMenu(false); }}
-          className="w-fit flex items-center p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group"
+          className="w-fit flex items-center pr-3 rounded-xl hover:bg-white/10 transition-all duration-200 group"
         >
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-700 to-black flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200 shadow-lg">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-700 to-black flex items-center justify-center mr-3 transition-transform duration-200 shadow-lg">
             <Terminal className="w-6 h-6 text-green-400" />
           </div>
           <span className="text-white font-medium">Terminal</span>
-        </button>
-        {page && (
+        </button> */}
+        {tabs.map(tab => (
           <button
-            onClick={() => setPage(page)}
-            className={`h-12 px-4 rounded-xl flex items-center gap-3 transition-all duration-200 ${page !== '' ? 'bg-white/20 shadow-lg' : 'bg-white/5 hover:bg-white/10'}`}
+            onClick={() => setPage(tab)}
+            className={`h-12 px-4 rounded-xl flex items-center gap-3 transition-all duration-200 ${page === tab ? 'bg-white/20 shadow-lg' : 'bg-white/5 hover:bg-white/10'}`}
           >
             <Folder className="w-5 h-5 text-white" />
-            <span className="text-white text-sm font-medium">{page}</span>
+            <span className="text-white text-sm font-medium">{tab}</span>
           </button>
-        )}
+        ))}
       </div>
 
       <div className="flex items-center gap-4 mr-3">
