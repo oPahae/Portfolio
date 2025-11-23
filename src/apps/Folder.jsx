@@ -68,9 +68,9 @@ const Folder = ({ page, setPage }) => {
       const allItems = e.target.result;
       const folderItems = allItems.filter(item => {
         if (item.type === 'folder') {
-          return item.ppath === currentPath;
+          return item.ppath === (currentPath || localStorage.getItem('currentFolder'));
         }
-        else return item.path === currentPath;
+        else return item.path === (currentPath || localStorage.getItem('currentFolder'));
       });
       setItems(folderItems);
     };
