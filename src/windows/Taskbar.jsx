@@ -28,7 +28,7 @@ const Windows = ({ page, setPage, __SPEECH__, $__SPEECH__, tabs, setTabs }) => {
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
-      console.warn("Speech Recognition not supported");
+      alert("Ce navigateur ne supporte pas le webservice 'webkitSpeechRecognition', essayez avec Chrome ou Edge...");
       return;
     }
 
@@ -285,6 +285,7 @@ const Windows = ({ page, setPage, __SPEECH__, $__SPEECH__, tabs, setTabs }) => {
 
       <div className='flex justify-center items-center'>
         <div className={`${speechActive ? 'bg-red-600 animate-ping' : 'bg-gray-300'} rounded-full w-6 h-6 cursor-pointer`} onClick={() => setSpeechActive(p => !p)} />
+          {speechActive && <span className='text-red-500 font-bold'>En train d'écouter...</span>}
       </div>
 
       <div className="w-px h-8 bg-white/20 mx-3"></div>
