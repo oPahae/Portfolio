@@ -15,12 +15,8 @@ const Windows = ({ page, setPage, __SPEECH__, $__SPEECH__, tabs, setTabs }) => {
   const startButtonRef = useRef(null);
 
   useEffect(() => {
-    ['start', 'démarrer', 'démarrage', 'applications'].forEach(key => {
-      if (__SPEECH__.toLowerCase().includes(key))
-        setShowStartMenu(true);
-    })
-    if (__SPEECH__.includes('arrête'))
-      setSpeechActive(false);
+    setShowStartMenu(['start', 'démarrer', 'démarrage', 'applications'].some(key => __SPEECH__.toLowerCase().includes(key)));
+    if (__SPEECH__.includes('arrête')) setSpeechActive(false);
   }, [__SPEECH__]);
 
   useEffect(() => {
