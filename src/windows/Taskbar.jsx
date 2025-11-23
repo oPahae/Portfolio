@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Terminal, Zap, Play, Folder, Wifi, Battery, Power, Settings, User, WifiOff, Router } from 'lucide-react';
 import { apps, games } from '@/utils/apps';
 import { useRouter } from 'next/router';
+import { desktopApps, desktopFolders, apps as tempApps, games as tempGames } from '@/utils/apps';
 
 const Windows = ({ page, setPage, __SPEECH__, $__SPEECH__, tabs, setTabs }) => {
   const router = useRouter();
@@ -303,7 +304,7 @@ const Windows = ({ page, setPage, __SPEECH__, $__SPEECH__, tabs, setTabs }) => {
             onClick={() => setPage(tab)}
             className={`h-12 px-4 rounded-xl flex items-center gap-3 transition-all duration-200 ${page === tab ? 'bg-white/20 shadow-lg' : 'bg-white/5 hover:bg-white/10'}`}
           >
-            <Folder className="w-5 h-5 text-white" />
+            <img src={[...desktopApps, ...desktopFolders, ...tempApps, ...tempGames].find(i => i.name === tab)?.icon || ''} className="w-5 h-5 text-white" />
             <span className="text-white text-sm font-medium">{tab}</span>
           </button>
         ))}
