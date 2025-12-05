@@ -39,7 +39,7 @@ const AI = ({ __SPEECH__ }) => {
     try {
       const contextualPrompt = `${buildContext()}\n\nQuestion de l'utilisateur: ${msg}`;
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDwVqL80ycP0sMykaPmeq_u7OdCJw35Otc`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
         {
           method: 'POST',
           headers: {
@@ -187,3 +187,4 @@ const AI = ({ __SPEECH__ }) => {
 };
 
 export default AI;
+
