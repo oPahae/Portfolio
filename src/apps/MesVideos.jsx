@@ -189,9 +189,9 @@ const MesVideos = ({ setPage }) => {
                                 ${selectedItems.includes(item.id) ? 'bg-[#1a3a52]' : ''}
                             `}
             >
-              <img src={`/mes_videos/${item.name.split('.')[0]}.png`} size={viewMode === 'grid' ? 48 : 24} className='text-blue-400 w-20' />
+              <img src={`/mes_videos/${item.name}.png`} size={viewMode === 'grid' ? 48 : 24} className='text-blue-400 w-20' />
               <span className={`${viewMode === 'grid' ? 'text-sm text-center' : 'text-sm'} break-words`}>
-                {item.name.split('.')[0]}
+                {item.name}
               </span>
             </div>
           ))}
