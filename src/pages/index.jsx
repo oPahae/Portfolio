@@ -154,6 +154,31 @@ const useDocuments = () => {
   return documents;
 };
 
+const useWebGLRedirect = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let hasWebGL = false;
+
+    try {
+      const canvas = document.createElement("canvas");
+      const gl =
+        canvas.getContext("webgl") ||
+        canvas.getContext("experimental-webgl");
+
+      hasWebGL = !!(gl && gl instanceof WebGLRenderingContext);
+    } catch {
+      hasWebGL = false;
+    }
+
+    if (!hasWebGL) {
+      router.replace("/badHardware");
+    }
+  }, [router]);
+};
+
 const useVoiceCommands = (__SPEECH__, setPage) => {
   useEffect(() => {
     if (!__SPEECH__) return;
@@ -188,6 +213,7 @@ const Index = ({ __SPEECH__, $__SPEECH__ }) => {
 
   const documents = useDocuments();
   useMobileRedirect();
+  useWebGLRedirect();
   useVoiceCommands(__SPEECH__, setPage);
 
   const handleClosePage = useCallback(() => {
@@ -214,22 +240,34 @@ const Index = ({ __SPEECH__, $__SPEECH__ }) => {
     e.stopPropagation();
   }, []);
 
+  const [canRender3D, setCanRender3D] = useState(false);
+
+  useEffect(() => {
+    try {
+      const canvas = document.createElement("canvas");
+      const gl = canvas.getContext("webgl");
+      setCanRender3D(!!gl);
+    } catch {
+      setCanRender3D(false);
+    }
+  }, []);
+
   return (
     <div className="h-screen">
-      <Stars />
+      {canRender3D && <Stars />}
       <Desktop page={page} setPage={setPage} __SPEECH__={__SPEECH__} />
-      <Taskbar 
-        page={page} 
-        setPage={setPage} 
-        __SPEECH__={__SPEECH__} 
-        $__SPEECH__={$__SPEECH__} 
-        tabs={tabs} 
-        setTabs={setTabs} 
+      <Taskbar
+        page={page}
+        setPage={setPage}
+        __SPEECH__={__SPEECH__}
+        $__SPEECH__={$__SPEECH__}
+        tabs={tabs}
+        setTabs={setTabs}
       />
 
       {page && (
-        <main 
-          className='fixed top-0 left-0 w-full h-full flex justify-center items-center z-40 backdrop-blur-sm cursor-pointer' 
+        <main
+          className='fixed top-0 left-0 w-full h-full flex justify-center items-center z-40 backdrop-blur-sm cursor-pointer'
           onClick={handleBackdropClick}
         >
           <div
