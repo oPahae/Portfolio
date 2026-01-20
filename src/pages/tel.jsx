@@ -9,7 +9,6 @@ export default function MobileWarning() {
   };
 
   const handleClose = () => {
-    // L'utilisateur comprend et ferme simplement la page
     window.history.back();
   };
 
