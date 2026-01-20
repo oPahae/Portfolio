@@ -34,7 +34,7 @@ const VideoViewer = ({ setPage }) => {
 
   const loadFile = () => {
     const currentFile = localStorage.getItem('currentFile');
-    if(currentFile.startsWith('/')) { // _MINE_
+    if(currentFile.startsWith('/') || currentFile.startsWith('http')) { // _MINE_
       setFileData({ content: currentFile })
       return
     }
