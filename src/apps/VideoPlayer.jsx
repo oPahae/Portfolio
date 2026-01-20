@@ -34,10 +34,10 @@ const VideoViewer = ({ setPage }) => {
 
   const loadFile = () => {
     const currentFile = localStorage.getItem('currentFile');
-    if(currentFile.startsWith('/')) { // _MINE_
-      setFileData({ content: currentFile })
-      return
-    }
+    // if(currentFile.startsWith('/')) { // _MINE_
+    //   setFileData({ content: currentFile })
+    //   return
+    // }
 
     if (!currentFile) {
       setPage('');
