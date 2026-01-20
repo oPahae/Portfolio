@@ -16,25 +16,27 @@ const MesVideos = ({ setPage }) => {
   const folderRef = useRef(null);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const res = await fetch(`/api/getMine?folder=${_FOLDER_}`);
-        const data = await res.json();
-
-        const formatted = data.vids.map((file, index) => ({
-          id: index,
-          name: file,
-          type: _TYPE_,
-          content: `/${_FOLDER_}/${file}`
-        }));
-
-        setItems(formatted);
-      } catch (error) {
-        console.error("Erreur récupération vidéos :", error);
-      }
-    };
-
-    fetchItems();
+    setItems([
+      {
+        id: 1,
+        name: "Me in AOT's world",
+        type: _TYPE_,
+        content: `/${_FOLDER_}/Me in AOT's world`
+      },
+      {
+        id: 2,
+        name: "PFE_Soutenance",
+        type: _TYPE_,
+        content: `/${_FOLDER_}/PFE_Soutenance`
+      },
+      {
+        id: 3,
+        name: "ألم يان للذين ءامنوا",
+        type: _TYPE_,
+        content: `/${_FOLDER_}/ألم يان للذين ءامنوا`
+      },
+    ]);
+    
     setCurrentPath(_PATH_);
 
     if (history.length === 0 || history[historyIndex] !== _PATH_) {
