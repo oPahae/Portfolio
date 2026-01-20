@@ -16,25 +16,27 @@ const MesVideos = ({ setPage }) => {
   const folderRef = useRef(null);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const res = await fetch(`/api/getMine?folder=${_FOLDER_}`);
-        const data = await res.json();
-
-        const formatted = data.vids.map((file, index) => ({
-          id: index,
-          name: file,
-          type: _TYPE_,
-          content: `/${_FOLDER_}/${file}`
-        }));
-
-        setItems(formatted);
-      } catch (error) {
-        console.error("Erreur récupération vidéos :", error);
-      }
-    };
-
-    fetchItems();
+    setItems([
+      {
+        id: 1,
+        name: "Me in AOT's world",
+        type: _TYPE_,
+        url: "https://res.cloudinary.com/dojxqpgai/video/upload/v1768945867/Me_in_AOTs_world_iii425.mp4"
+      },
+      {
+        id: 2,
+        name: "PFE_Soutenance",
+        type: _TYPE_,
+        url: "https://res.cloudinary.com/dojxqpgai/video/upload/v1768945704/PFE_Soutenance_i5pkrn.mp4"
+      },
+      {
+        id: 3,
+        name: "ألم يان للذين ءامنوا",
+        type: _TYPE_,
+        url: "https://res.cloudinary.com/dojxqpgai/video/upload/v1768945383/%D8%A3%D9%84%D9%85_%D9%8A%D8%A7%D9%86_%D9%84%D9%84%D8%B0%D9%8A%D9%86_%D8%A1%D8%A7%D9%85%D9%86%D9%88%D8%A7_lsl2jr.mp4"
+      },
+    ]);
+    
     setCurrentPath(_PATH_);
 
     if (history.length === 0 || history[historyIndex] !== _PATH_) {
@@ -57,7 +59,7 @@ const MesVideos = ({ setPage }) => {
   };
 
   const handleItemDoubleClick = (item) => {
-    localStorage.setItem('currentFile', `/${_FOLDER_}/${item.name}`);
+    localStorage.setItem('currentFile', item.url);
     if (item.type === 'file') setPage('File');
     if (item.type === 'image') setPage('Image Viewer');
     if (item.type === 'video') setPage('Video Player');
