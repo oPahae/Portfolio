@@ -437,6 +437,17 @@ const projects = [
     lvl: 52,
     createdAt: "30/01/2026",
   },
+  {
+    _id: ++i,
+    title: "Panorama Dades",
+    description:
+      "Site web vitrine et administratif pour le Panorama Dades Hotel, mettant en valeur l’hôtel, ses chambres, ses services et la beauté de la vallée du Dadès afin d’attirer et informer les visiteurs. Avec gestion complète des reservations, factures, clients et agents.",
+    technologies: ["NextJS", "TailwindCSS"],
+    type: "commercialisé",
+    website: "https://www.imperialtrailtours.com",
+    lvl: 53,
+    createdAt: "08/02/2026",
+  },
 ];
 
 const config = {
@@ -494,5 +505,6 @@ const voiceCommands = [
   { words: ["terminal", "cmd", "invite de commande"], page: "Terminal" },
   { words: ["ferme tout", "fermer", "clear", "ferme"], page: "" },
 ];
+
 
 export { socials, achievements, SKILLS, feedbacks, projects, config, media, voiceCommands };
