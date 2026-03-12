@@ -410,7 +410,7 @@ const projects = [
       "Siteweb officiel du Club WORMZ de la FST Settat.",
     technologies: ["HTML", "TailwindCSS", "JS", "PHP"],
     type: "commercialisé",
-    website: "https://wormz.vercel.app",
+    website: "https://wormz.vercel.app/classement",
     lvl: 11,
     createdAt: "12/11/2025",
   },
@@ -428,7 +428,7 @@ const projects = [
   },
   {
     _id: ++i,
-    title: "Imperial Trail Tours",
+    title: "l Trail Tours",
     description:
       "Une plateforme dédiée aux touristes pour l’organisation de circuits et excursions au Maroc, offrant diverses fonctionnalités.",
     technologies: ["NextJS", "TailwindCSS"],
@@ -508,3 +508,4 @@ const voiceCommands = [
 
 
 export { socials, achievements, SKILLS, feedbacks, projects, config, media, voiceCommands };
+
