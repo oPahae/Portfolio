@@ -142,6 +142,7 @@ const useDocuments = () => {
           throw new Error('Échec de la récupération des documents');
         }
         const data = await response.json();
+        console.log(data.documents);
         setDocuments(data.documents);
       } catch (err) {
         console.error('Erreur lors de la récupération des documents:', err);
