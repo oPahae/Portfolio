@@ -18,8 +18,25 @@ const Desktop = ({ page, setPage, __SPEECH__ }) => {
     const [iconSize, setIconSize] = useState('medium');
     const [renamingItemId, setRenamingItemId] = useState(null);
     const [renameValue, setRenameValue] = useState('');
+    const [gridCols, setGridCols] = useState(12);
     const desktopRef = useRef(null);
     const db = useRef(null);
+
+    const updateGridCols = () => {
+        if (!desktopRef.current) return;
+
+        const width = desktopRef.current.clientWidth;
+        const cols = Math.floor(width / GRID_SIZE);
+
+        setGridCols(cols);
+    };
+
+    useEffect(() => {
+        updateGridCols();
+        window.addEventListener('resize', updateGridCols);
+
+        return () => window.removeEventListener('resize', updateGridCols);
+    }, []);
 
     const GRID_SIZE = 105;
     const ICON_SIZES = {
@@ -96,7 +113,7 @@ const Desktop = ({ page, setPage, __SPEECH__ }) => {
                 return {
                     ...folder,
                     type: 'myfolder',
-                    gridX: saved?.gridX ?? 11,
+                    gridX: saved?.gridX ?? (gridCols - 1),
                     gridY: saved?.gridY ?? index
                 };
             });
@@ -240,7 +257,7 @@ const Desktop = ({ page, setPage, __SPEECH__ }) => {
 
     const findEmptyPosition = () => {
         for (let y = 0; y < 20; y++) {
-            for (let x = 0; x < 12; x++) {
+            for (let x = 0; x < gridCols; x++) {
                 if (!items.some(item => item.gridX === x && item.gridY === y)) {
                     return { x, y };
                 }
@@ -276,7 +293,7 @@ const Desktop = ({ page, setPage, __SPEECH__ }) => {
             const x = e.clientX - rect.left - dragOffset.x;
             const y = e.clientY - rect.top - dragOffset.y;
 
-            const gridX = Math.max(0, Math.min(11, Math.round(x / GRID_SIZE)));
+            const gridX = Math.max(0, Math.min(gridCols - 1, Math.round(x / GRID_SIZE)));
             const gridY = Math.max(0, Math.floor(y / GRID_SIZE));
 
             const draggedItems = selectedItems.length > 1 && selectedItems.includes(dragging)
@@ -290,7 +307,7 @@ const Desktop = ({ page, setPage, __SPEECH__ }) => {
             setItems(prevItems => {
                 const updatedItems = prevItems.map(item => {
                     if (draggedItems.includes(item.id)) {
-                        const newX = Math.max(0, Math.min(11, item.gridX + offsetX));
+                        const newX = Math.max(0, Math.min(gridCols - 1, item.gridX + offsetX));
                         const newY = Math.max(0, item.gridY + offsetY);
                         return { ...item, gridX: newX, gridY: newY };
                     }
@@ -370,7 +387,7 @@ const Desktop = ({ page, setPage, __SPEECH__ }) => {
 
     const findEmptyPositionExcluding = (allItems, excludeIds) => {
         for (let y = 0; y < 20; y++) {
-            for (let x = 0; x < 12; x++) {
+            for (let x = 0; x < gridCols; x++) {
                 if (!allItems.some(item => !excludeIds.includes(item.id) && item.gridX === x && item.gridY === y)) {
                     return { x, y };
                 }

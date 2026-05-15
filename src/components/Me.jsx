@@ -13,7 +13,7 @@ const Me = () => {
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl blur-2xl opacity-40"></div>
                   <img
-                    src="/me.jpg"
+                    src="/me.png"
                     alt="LAMRISSI Bahaa-eddine"
                     className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-cover rounded-3xl border-4 border-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 p-[2px] transform transition-transform duration-300 hover:scale-105"
                     style={{ borderRadius: '1.5rem' }}

@@ -103,14 +103,6 @@ const SKILLS = {
     color: "#563d7c",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
   },
-  react: {
-    id: 5,
-    name: "react",
-    label: "React",
-    shortDescription: "Une bibliothèque JavaScript pour créer des interfaces utilisateur rapides et réutilisables avec des composants.",
-    color: "#61dafb",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
-  },
   php: {
     id: 6,
     name: "php",
@@ -119,6 +111,14 @@ const SKILLS = {
     color: "#777bb3",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
   },
+  react: {
+    id: 5,
+    name: "react",
+    label: "React",
+    shortDescription: "Une bibliothèque JavaScript pour créer des interfaces utilisateur rapides et réutilisables avec des composants.",
+    color: "#61dafb",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+  },
   nextjs: {
     id: 7,
     name: "nextjs",
@@ -126,6 +126,30 @@ const SKILLS = {
     shortDescription: "Un framework basé sur React pour créer des applications web full-stack avec rendu côté serveur.",
     color: "#fff",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+  },
+  springboot: {
+    id: 25,
+    name: "springboot",
+    label: "Spring Boot",
+    shortDescription: "Un framework Java puissant permettant de créer rapidement des applications backend et APIs robustes.",
+    color: "#6db33f",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
+  },
+  dart: {
+    id: 26,
+    name: "dart",
+    label: "Dart",
+    shortDescription: "Un langage de programmation optimisé pour créer des applications rapides multiplateformes.",
+    color: "#0175c2",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
+  },
+  flutter: {
+    id: 27,
+    name: "flutter",
+    label: "Flutter",
+    shortDescription: "Un framework UI de Google permettant de créer des applications mobiles, web et desktop avec une seule base de code.",
+    color: "#02569b",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg",
   },
   tailwind: {
     id: 8,
@@ -414,7 +438,7 @@ const projects = [
     lvl: 11,
     createdAt: "12/11/2025",
   },
-  { 
+  {
     _id: ++i,
     title: "Tasky",
     description:
@@ -428,7 +452,7 @@ const projects = [
   },
   {
     _id: ++i,
-    title: "l Trail Tours",
+    title: "Imperial Trail Tours",
     description:
       "Une plateforme dédiée aux touristes pour l’organisation de circuits et excursions au Maroc, offrant diverses fonctionnalités.",
     technologies: ["NextJS", "TailwindCSS"],
@@ -447,6 +471,18 @@ const projects = [
     website: "https://www.imperialtrailtours.com",
     lvl: 53,
     createdAt: "08/02/2026",
+  },
+  {
+    _id: ++i,
+    title: "GymFuel",
+    description:
+      "Application mobile permettant la création de programmes de sport, le suivi du poids, la gestion de nutrition, la consultation de tutoriels d’exercices et la communication avec des coachs.",
+    technologies: ["Spring Boot", "NextJS"],
+    type: "académique",
+    // website: "https://www.imperialtrailtours.com",
+    github: "https://github.com/oPahae/GymApp",
+    lvl: 54,
+    createdAt: "15/05/2026",
   },
 ];
 
